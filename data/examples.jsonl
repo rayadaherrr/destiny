@@ -1,0 +1,15 @@
+{"message": "Plan a trip for me, Alex and Raya from 10 to 15 June, 500 euros each. We loved Barcelona but want somewhere cheaper with great food.", "expected": {"origin": "lisbon", "destination": null, "people": 3, "start_date": "2027-06-10", "end_date": "2027-06-15", "budget_per_person_eur": 500, "interests": ["food"], "cheaper_than": "barcelona"}}
+{"message": "Me and 2 friends, 500 euros each", "expected": {"people": 3, "budget_per_person_eur": 500}}
+{"message": "I want good restaurants and nice weather, max 3 hours away", "expected": {"interests": ["food"], "climate_wanted": "warm", "max_travel_hours": 3}}
+{"message": "somewhere sunny with beaches", "expected": {"interests": ["beach"], "climate_wanted": "warm"}}
+{"message": "a city with good pubs and parties", "expected": {"interests": ["nightlife"]}, "note": "pubs and parties are not in the tag descriptions"}
+{"message": "hiking and wine tasting", "expected": {"interests": ["nature", "food"]}, "note": "ambiguous: we decided wine tasting counts as food"}
+{"message": "From Porto, somewhere warm, max 3 hours away", "expected": {"origin": "porto", "destination": null, "climate_wanted": "warm", "max_travel_hours": 3}}
+{"message": "from lisboa", "expected": {"origin": "lisbon"}, "note": "Portuguese spelling of Lisbon"}
+{"message": "paris", "expected": {"origin": "lisbon", "destination": "paris"}}
+{"message": "prais", "expected": {"origin": "lisbon", "destination": "paris"}, "note": "typo for Paris"}
+{"message": "cheaper than barcleona", "expected": {"cheaper_than": "barcelona", "destination": null}, "note": "typo; Barcelona is a comparison, not a destination"}
+{"message": "A weekend trip from 28 to 31 October", "expected": {"start_date": "2027-10-28", "end_date": "2027-10-31"}, "note": "written on 2026-10-29: 28 Oct already passed, so the rule says next year"}
+{"message": "One day trip on 10 October", "expected": {"start_date": "2027-10-10", "end_date": "2027-10-10"}, "note": "10 Oct already passed; one-day trip = same start and end"}
+{"message": "Somewhere with beaches and bars this summer", "expected": {"interests": ["beach", "nightlife"], "start_date": null, "end_date": null}, "note": "no exact dates; 'this summer' is lost until we add a month/season field"}
+{"message": "hello", "expected": {"origin": "lisbon", "destination": null, "people": 1, "budget_per_person_eur": null, "interests": []}, "note": "nothing said: defaults"}

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "porto",
+    "name": "Porto",
+    "country": "Portugal",
+    "description": "Riverside city known for port wine cellars, seafood and its historic old town.",
+    "avg_night_price_eur": 112,
+    "food_per_day_eur": 35,
+    "activities_per_day_eur": 15,
+    "travel_from": {
+      "lisbon": {"hours": 3, "cost_eur": 34, "mode": "train"}
+    },
+    "tags": ["food", "culture", "architecture", "nightlife"],
+    "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
+    "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
+  },
+  {
+    "id": "valencia",
+    "name": "Valencia",
+    "country": "Spain",
+    "description": "Mediterranean beach city, home of paella and the futuristic City of Arts and Sciences.",
+    "avg_night_price_eur": 144,
+    "food_per_day_eur": 35,
+    "activities_per_day_eur": 15,
+    "travel_from": {
+      "lisbon": {"hours": 1.5, "cost_eur": 70, "mode": "flight"}
+    },
+    "tags": ["beach", "food", "architecture", "culture"],
+    "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
+    "seasons": {"high": [3, 7, 8], "low": [1, 2, 11]}
+  },
+  {
+    "id": "seville",
+    "name": "Seville",
+    "country": "Spain",
+    "description": "Andalusian city of flamenco, tapas bars, the Alcázar palace and orange-tree squares.",
+    "avg_night_price_eur": 158,
+    "food_per_day_eur": 30,
+    "activities_per_day_eur": 15,
+    "travel_from": {
+      "lisbon": {"hours": 1, "cost_eur": 60, "mode": "flight"}
+    },
+    "tags": ["culture", "architecture", "food", "nightlife"],
+    "climate": {"spring": "warm", "summer": "hot", "autumn": "warm", "winter": "mild"},
+    "seasons": {"high": [3, 4, 5, 10], "low": [1, 7, 8]}
+  },
+  {
+    "id": "barcelona",
+    "name": "Barcelona",
+    "country": "Spain",
+    "description": "Lively seaside city famous for Gaudí's architecture, beaches and nightlife.",
+    "avg_night_price_eur": 257,
+    "food_per_day_eur": 45,
+    "activities_per_day_eur": 25,
+    "travel_from": {
+      "lisbon": {"hours": 2, "cost_eur": 80, "mode": "flight"}
+    },
+    "tags": ["beach", "architecture", "nightlife", "food", "culture"],
+    "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
+    "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
+  },
+  {
+    "id": "madrid",
+    "name": "Madrid",
+    "country": "Spain",
+    "description": "Spain's capital, with world-class art museums, big parks and late-night tapas culture.",
+    "avg_night_price_eur": 173,
+    "food_per_day_eur": 40,
+    "activities_per_day_eur": 15,
+    "travel_from": {
+      "lisbon": {"hours": 1.5, "cost_eur": 65, "mode": "flight"}
+    },
+    "tags": ["culture", "nightlife", "food"],
+    "climate": {"spring": "mild", "summer": "hot", "autumn": "mild", "winter": "cold"},
+    "seasons": {"high": [4, 5, 9, 10], "low": [1, 2, 8]}
+  },
+  {
+    "id": "rome",
+    "name": "Rome",
+    "country": "Italy",
+    "description": "The Eternal City: ancient ruins, Renaissance art and some of the best food in Europe.",
+    "avg_night_price_eur": 187,
+    "food_per_day_eur": 45,
+    "activities_per_day_eur": 25,
+    "travel_from": {
+      "lisbon": {"hours": 3, "cost_eur": 100, "mode": "flight"}
+    },
+    "tags": ["culture", "architecture", "food"],
+    "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "cold"},
+    "seasons": {"high": [4, 5, 6, 9, 10], "low": [1, 2, 11]}
+  }
+]
