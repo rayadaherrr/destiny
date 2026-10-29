@@ -4,6 +4,7 @@ from google import genai
 
 import config
 from schemas import TripRequest
+from tools import fix_year
 
 client = genai.Client(api_key=config.API_KEY)
 
@@ -38,15 +39,6 @@ def instruction():
     )
     
 
-
-def fix_year(request):
-    # A trip can't start in the past. This is decided in code, not in the prompt (Week 5)
-    today = datetime.date.today()
-    start, end = request.start_date, request.end_date
-    while start and start < today:
-        start = start.replace(year=start.year + 1)
-        end = end.replace(year=end.year + 1) if end else None
-    return request.model_copy(update={"start_date": start, "end_date": end})
 
 
 def extract_request(message):
