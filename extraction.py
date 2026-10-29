@@ -39,6 +39,16 @@ def instruction():
     
 
 
+def fix_year(request):
+    # A trip can't start in the past. This is decided in code, not in the prompt (Week 5)
+    today = datetime.date.today()
+    start, end = request.start_date, request.end_date
+    while start and start < today:
+        start = start.replace(year=start.year + 1)
+        end = end.replace(year=end.year + 1) if end else None
+    return request.model_copy(update={"start_date": start, "end_date": end})
+
+
 def extract_request(message):
     # One call to Gemini: the message in, a TripRequest out
     interaction = client.interactions.create(
@@ -52,4 +62,5 @@ def extract_request(message):
         },
     )
    
-    return TripRequest.model_validate_json(interaction.output_text)
+    request = TripRequest.model_validate_json(interaction.output_text)
+    return fix_year(request)
