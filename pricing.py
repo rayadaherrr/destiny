@@ -60,10 +60,11 @@ def estimate_cost(city: City, request: TripRequest):
     season_mult = SEASON_MULTIPLIER[season]
 
     # Step 4: every amount is per person, for the whole trip
+    days = max(nights, 1)                                                # a day trip still has 1 day of food/activities
     travel_eur = travel.cost_eur * 2 * season_mult * booking             # return trip
-    stay_eur = city.avg_night_price_eur * season_mult * nights / people  # shared place
-    food_eur = city.food_per_day_eur * nights
-    activities_eur = city.activities_per_day_eur * nights
+    stay_eur = city.avg_night_price_eur * season_mult * nights / people  # shared place (0 nights = no stay)
+    food_eur = city.food_per_day_eur * days
+    activities_eur = city.activities_per_day_eur * days
     total_eur = travel_eur + stay_eur + food_eur + activities_eur
 
     # Step 5: fill in the price form
