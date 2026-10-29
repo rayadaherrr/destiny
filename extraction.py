@@ -36,7 +36,7 @@ def instruction():
         "For vague timing like 'this summer', 'in May' or 'next month', leave both dates null. "
         "Leave a field empty only if the user said nothing about it."
     )
-    )
+    
 
 
 def extract_request(message):
