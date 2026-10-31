@@ -106,3 +106,45 @@ def find_trips(args):
                 "what_to_do": "No city matches every limit. Tell the user which limit ruled them out, "
                               "and suggest relaxing one."}
     return {"found": True, "trips": trips}
+
+# ---------------------------------------------------------------- the tool list (from the teacher's Week 5 tools.py)
+
+# name: (argument model, function, description). The declarations are built from it.
+TOOLS = {
+    "find_trips": (TripRequest, find_trips,
+                   "Find and price trips from the user's starting city: every city we cover that matches their "
+                   "dates, group size, budget, maximum travel time, interests, destination and 'cheaper than' city, "
+                   "cheapest first. Use it whenever the user asks where to go or how much a trip would cost."),
+}
+
+# Tools that destroy what the user already has. They receive confirm() and must get a yes before acting.
+ASK_FIRST = set()   # delete_trip goes here in Part 3
+
+DECLARATIONS = [
+    {"type": "function", "name": name, "description": description, "parameters": model.model_json_schema()}
+    for name, (model, _, description) in TOOLS.items()
+]
+
+
+def run_tool(name, arguments, confirm):
+    """Run one call the model asked for. Every failure comes back as a result; nothing raises."""
+    if name not in TOOLS:
+        return {"error": f"There is no tool called {name}. The tools are: {', '.join(TOOLS)}."}
+    model, function, _ = TOOLS[name]
+    try:
+        args = model.model_validate(arguments)
+    except ValidationError as error:
+        problem = error.errors()[0]
+        field = ".".join(str(part) for part in problem["loc"]) or "arguments"
+        return {"error": f"Invalid {field}: {problem['msg']}. Fix it and call again."}
+    try:
+        result = function(args, confirm) if name in ASK_FIRST else function(args)
+    except Exception as error:
+        # A write that failed half-way may or may not have changed the data. Say so,
+        # or the agent will repeat it blindly and write it twice.
+        return {"error": f"{name} failed: {str(error).rstrip('.')}. If it writes, it may or may not "
+                         "have changed the data: read the data again before repeating it."}
+    # The API takes a dict of JSON values: wrap anything else, and turn dates into text.
+    if not isinstance(result, dict):
+        result = {"result": result}
+    return json.loads(json.dumps(result, default=str))
