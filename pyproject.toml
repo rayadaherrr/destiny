@@ -5,6 +5,7 @@ description = "Course starting point - Capstone Project, NOVA IMS"
 requires-python = ">=3.12"
 dependencies = [
     "google-genai>=2.0.0",
+    "pydantic>=2.13.5",
     "python-dotenv>=1.0.0",
     "streamlit>=1.60.0",
 ]
