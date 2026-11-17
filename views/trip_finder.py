@@ -8,6 +8,7 @@ import config
 import db
 from extraction import extract_request
 from geo import COORDS
+from pricing import estimate_cost
 from schemas import TripRequest
 from tools import find_trips, load_cities
 
@@ -17,7 +18,22 @@ cities = load_cities()
 by_id = {c.id: c for c in cities}
 my_id = st.session_state.user_id
 
+# A typical trip, used only to colour the map: 1 person, no dates (5 nights, normal season)
+BASELINE = TripRequest(
+    origin="lisbon", start_date=None, end_date=None, people=1,
+    budget_per_person_eur=None, max_travel_hours=None, destination=None,
+    interests=[], climate_wanted=None, cheaper_than=None,
+)
 
+# colour mode -> (which number to use, is lower better?, colour-bar title)
+COLOR_MODES = {
+    "Average Price (Low to High)": ("price", True, "Price (green = cheaper)"),
+    "Your Past Ratings": ("rating", False, "Your rating (green = higher)"),
+    "Travel Time from Origin": ("hours", True, "Travel time (green = faster)"),
+}
+
+
+# ------------------------------------------------------------ helpers
 def my_rating(city_id):
     """Average of the ratings the logged-in user gave this city, or None."""
     ratings = [t["rating"] for t in db.user_trips(my_id) if t["city_id"] == city_id]
@@ -83,6 +99,50 @@ def show_understood(r):
     st.markdown("**I understood:** " + " · ".join(parts))
 
 
+def map_rows(cities_to_show, color_mode):
+    """One row per city for the map, using real data from cities.json and your ratings."""
+    my_trips = db.user_trips(my_id)          # one database query, not one per city
+    metrics = {}
+    for c in cities_to_show:
+        mine = [t["rating"] for t in my_trips if t["city_id"] == c.id]
+        estimate = estimate_cost(c, BASELINE)
+        travel = c.travel_from.get(BASELINE.origin)
+        metrics[c.id] = {
+            "price": estimate.total_eur if estimate else None,
+            "rating": sum(mine) / len(mine) if mine else None,
+            "hours": travel.hours if travel else None,
+        }
+
+    key, lower_is_better, scale_label = COLOR_MODES[color_mode]
+    known = [m[key] for m in metrics.values() if m[key] is not None]
+    if key == "rating":
+        low, high = 1, 5                     # ratings always use the full 1-5 scale
+    else:
+        low, high = (min(known), max(known)) if known else (0, 1)
+    span = (high - low) or 1.0
+
+    rows = []
+    for c in cities_to_show:
+        m = metrics[c.id]
+        if m[key] is None:
+            score = 0.5                      # no data: neutral middle colour
+        else:
+            score = (m[key] - low) / span
+            if lower_is_better:
+                score = 1 - score
+        details = " · ".join([
+            f"€{m['price']:.0f} for a typical 5-night trip" if m["price"] is not None else "no price data",
+            f"{m['hours']:g} h from {BASELINE.origin.title()}" if m["hours"] is not None else "no travel data",
+            f"you: {m['rating']:.1f} ★" if m["rating"] is not None else "you: not rated yet",
+        ])
+        rows.append({
+            "id": c.id, "city": c.name, "country": c.country,
+            "lat": COORDS[c.id][0], "lon": COORDS[c.id][1],
+            "metric_val": score, "details": details, "scale_label": scale_label,
+        })
+    return rows
+
+
 tab_prompt, tab_map = st.tabs(["✍️ Describe your trip", "🗺️ Pick on the map"])
 
 # ------------------------------------------------------------ option 1: describe it
@@ -111,46 +171,92 @@ with tab_prompt:
 
 # ------------------------------------------------------------ option 2: pick on the map
 with tab_map:
-    df = pd.DataFrame([
-        {"id": c.id, "city": c.name, "lat": COORDS[c.id][0], "lon": COORDS[c.id][1]}
-        for c in cities if c.id in COORDS
-    ])
-    fig = px.scatter_geo(df, lat="lat", lon="lon", hover_name="city", scope="europe")
-    fig.update_traces(marker={"size": 14, "color": "#e4572e"})
-    fig.update_layout(margin={"l": 0, "r": 0, "t": 0, "b": 0}, height=420)
+    st.subheader("Explore Destinations")
 
-    event = st.plotly_chart(fig, on_select="rerun", selection_mode="points", key="europe_map")
-    points = event.selection.points
-    map_pick = df.iloc[points[0]["point_index"]]["id"] if points else None
+    with st.expander("Filter and color options", expanded=True):
+        col_f1, col_f2 = st.columns(2)
+        all_tags = sorted({tag for c in cities for tag in c.tags})
+        selected_tags = col_f1.multiselect("Filter by tags/interests", all_tags)
+        color_mode = col_f2.selectbox("Color map by", list(COLOR_MODES), index=0)
 
-    list_pick = st.selectbox("…or choose from the list", [None] + list(df["id"]),
-                             format_func=lambda cid: "—" if cid is None else by_id[cid].name)
-    city_id = map_pick or list_pick
+    filtered_cities = [
+        c for c in cities
+        if c.id in COORDS and (not selected_tags or any(tag in selected_tags for tag in c.tags))
+    ]
+    df = pd.DataFrame(map_rows(filtered_cities, color_mode))
 
-    if city_id is None:
-        st.info("Click a city on the map to start.")
+    if df.empty:
+        st.warning("No cities match the selected filters.")
     else:
-        city = by_id[city_id]
-        st.subheader(f"{city.name}, {city.country}")
-        st.caption(city.description)
+        fig = px.scatter_geo(
+            df, lat="lat", lon="lon",
+            color="metric_val", color_continuous_scale="RdYlGn", range_color=[0.0, 1.0],
+            hover_name="city",
+            hover_data={"country": True, "details": True,
+                        "metric_val": False, "lat": False, "lon": False},
+            scope="europe",
+        )
+        fig.update_traces(
+            marker={"size": 16, "line": {"width": 1, "color": "white"}},
+            hovertemplate="<b>%{hovertext}</b><br>%{customdata[0]}<br>%{customdata[1]}<extra></extra>",
+        )
+        fig.update_layout(
+            geo={
+                "bgcolor": "rgba(0,0,0,0)",
+                "showland": True,
+                "landcolor": "#f4f4f6",
+                "subunitcolor": "#ffffff",
+                "countrycolor": "#dcdde1",
+                "center": {"lat": 50, "lon": 10},
+                "projection": {"scale": 3.2},
+            },
+            margin={"l": 0, "r": 0, "t": 0, "b": 0},
+            height=420,
+            coloraxis_colorbar={
+                "title": df["scale_label"].iloc[0],
+                "thickness": 12,
+                "len": 0.6,
+                "y": 0.5,
+                "tickvals": [0, 0.5, 1],
+                "ticktext": ["Low / Worst", "Medium", "High / Best"],
+            },
+        )
 
-        today = datetime.date.today()
-        with st.form("map_form"):
-            c1, c2 = st.columns(2)
-            start = c1.date_input("Start date", value=today + datetime.timedelta(days=30))
-            end = c2.date_input("End date", value=today + datetime.timedelta(days=35))
-            c3, c4 = st.columns(2)
-            people = c3.number_input("People", min_value=1, max_value=20, value=1)
-            budget = c4.number_input("Budget per person (€)", min_value=0.0, step=50.0,
-                                     value=None, placeholder="no budget")
-            go = st.form_submit_button(f"Price a trip to {city.name}")
-        if go:
-            st.session_state.map_request = TripRequest(
-                origin="lisbon", destination=city_id,
-                start_date=start, end_date=end, people=int(people),
-                budget_per_person_eur=budget or None,
-                max_travel_hours=None, interests=[], climate_wanted=None, cheaper_than=None,
-            )
-        request = st.session_state.get("map_request")
-        if request and request.destination == city_id:
-            show_trips(request)
+        # The key changes with the filters, so an old click can't point at the wrong city
+        map_key = f"europe_map_{color_mode}_{'-'.join(selected_tags)}"
+        event = st.plotly_chart(fig, on_select="rerun", selection_mode="points", key=map_key)
+        points = event.selection.points
+        index = points[0]["point_index"] if points else None
+        map_pick = df.iloc[index]["id"] if index is not None and index < len(df) else None
+
+        list_pick = st.selectbox("…or choose from the list", [None] + list(df["id"]),
+                                 format_func=lambda cid: "—" if cid is None else by_id[cid].name)
+        city_id = map_pick or list_pick
+
+        if city_id is None:
+            st.info("Click a city on the map to start.")
+        else:
+            city = by_id[city_id]
+            st.subheader(f"{city.name}, {city.country}")
+            st.caption(city.description)
+
+            today = datetime.date.today()
+            with st.form("map_form"):
+                c1, c2 = st.columns(2)
+                start = c1.date_input("Start date", value=today + datetime.timedelta(days=30))
+                end = c2.date_input("End date", value=today + datetime.timedelta(days=35))
+                c3, c4 = st.columns(2)
+                people = c3.number_input("People", min_value=1, max_value=20, value=1)
+                budget = c4.number_input("Budget per person (€)", min_value=0.0, step=50.0,
+                                         value=None, placeholder="no budget")
+                go = st.form_submit_button(f"Price a trip to {city.name}")
+            if go:
+                st.session_state.map_request = TripRequest(
+                    origin="lisbon", destination=city_id,
+                    start_date=start, end_date=end, people=int(people),
+                    budget_per_person_eur=budget or None,
+                    max_travel_hours=None, interests=[], climate_wanted=None, cheaper_than=None,
+                )
+            request = st.session_state.get("map_request")
+            if request and request.destination == city_id:
+                show_trips(request)
