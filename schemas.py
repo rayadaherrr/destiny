@@ -31,6 +31,8 @@ class City(BaseModel):
     id: str
     name: str
     country: str
+    lat: float = Field(description="Latitude of the city centre, e.g. 41.15 for Porto")
+    lon: float = Field(description="Longitude of the city centre, e.g. -8.63 for Porto (west of Greenwich is negative)")
     description: str
     avg_night_price_eur: float = Field(description="Average Airbnb price per night for the whole place, in euros")
     food_per_day_eur: float = Field(description="Food cost per person per day, in euros")

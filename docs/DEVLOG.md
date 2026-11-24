@@ -112,7 +112,10 @@ Method every time: **run/test → see something wrong → find the cause → cha
 
 ### Step 15 – Any city in the list as the starting point (branch `any-city`)
 - **Why:** the teacher said that having Lisbon as the only starting point is weak.
-- **Cause in the code:** each city stores only its route from Lisbon (`travel_from: {"lisbon": ...}`), used in `schemas.py`, `pricing.py` and `tools.py`. Any other origin gives "No cities found".
+- **Cause in the code:** each city stores only its route from Lisbon (`travel_from: {"lisbon": ...}`), used in `schemas.py`, `pricing.py`, `tools.py` and `views/trip_finder.py` (the map). Any other origin gives "No cities found".
 - **Plan:** store each city's `lat`/`lon`, remove `travel_from`, calculate travel between any two cities in a new `travel.py` (distance → mode, hours, cost), then add more cities.
-- **Changes:** *(fill in as we go)*
+- **Baseline before any-city (24 Nov 2026, gemini-flash-lite-latest):** 15/15 messages, 40/40 fields (`uv run python eval_extraction.py`).
+- **Agreed with Shaahir (24 Nov):** coordinates go into `cities.json`; `geo.py` stays for now because the map uses it; delete it later once the map reads `lat`/`lon` from `cities.json`.
+- **Changes:**
+  - `schemas.py`: City gets `lat` and `lon` (floats, with descriptions; west of Greenwich is negative); `travel_from` kept for now (the map still uses it)
 - **Retest:** *(fill in as we go)*
