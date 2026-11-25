@@ -37,7 +37,6 @@ class City(BaseModel):
     avg_night_price_eur: float = Field(description="Average Airbnb price per night for the whole place, in euros")
     food_per_day_eur: float = Field(description="Food cost per person per day, in euros")
     activities_per_day_eur: float = Field(description="Activities cost per person per day, in euros")
-    travel_from: dict[str, Travel] = Field(description="Travel to this city, by starting city id")
     tags: list[Tag]
     climate: Climate
     seasons: Seasons

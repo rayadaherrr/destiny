@@ -9,9 +9,6 @@
     "avg_night_price_eur": 112,
     "food_per_day_eur": 35,
     "activities_per_day_eur": 15,
-    "travel_from": {
-      "lisbon": {"hours": 3, "cost_eur": 34, "mode": "train"}
-    },
     "tags": ["food", "culture", "architecture", "nightlife"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
@@ -26,9 +23,6 @@
     "avg_night_price_eur": 144,
     "food_per_day_eur": 35,
     "activities_per_day_eur": 15,
-    "travel_from": {
-      "lisbon": {"hours": 1.5, "cost_eur": 70, "mode": "flight"}
-    },
     "tags": ["beach", "food", "architecture", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [3, 7, 8], "low": [1, 2, 11]}
@@ -43,9 +37,6 @@
     "avg_night_price_eur": 158,
     "food_per_day_eur": 30,
     "activities_per_day_eur": 15,
-    "travel_from": {
-      "lisbon": {"hours": 1, "cost_eur": 60, "mode": "flight"}
-    },
     "tags": ["culture", "architecture", "food", "nightlife"],
     "climate": {"spring": "warm", "summer": "hot", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [3, 4, 5, 10], "low": [1, 7, 8]}
@@ -60,9 +51,6 @@
     "avg_night_price_eur": 257,
     "food_per_day_eur": 45,
     "activities_per_day_eur": 25,
-    "travel_from": {
-      "lisbon": {"hours": 2, "cost_eur": 80, "mode": "flight"}
-    },
     "tags": ["beach", "architecture", "nightlife", "food", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
@@ -77,9 +65,6 @@
     "avg_night_price_eur": 173,
     "food_per_day_eur": 40,
     "activities_per_day_eur": 15,
-    "travel_from": {
-      "lisbon": {"hours": 1.5, "cost_eur": 65, "mode": "flight"}
-    },
     "tags": ["culture", "nightlife", "food"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [4, 5, 9, 10], "low": [1, 2, 8]}
@@ -94,29 +79,25 @@
     "avg_night_price_eur": 187,
     "food_per_day_eur": 45,
     "activities_per_day_eur": 25,
-    "travel_from": {
-      "lisbon": {"hours": 3, "cost_eur": 100, "mode": "flight"}
-    },
     "tags": ["culture", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "cold"},
     "seasons": {"high": [4, 5, 6, 9, 10], "low": [1, 2, 11]}
   },
   {
-  "id": "lisbon",
-  "name": "Lisbon",
-  "country": "Portugal",
-  "lat": 38.7223,
-  "lon": -9.1393,
-  "description": "Hilly capital of trams, tiled facades and viewpoints, with fado, pastéis de nata and beaches nearby.",
-  "avg_night_price_eur": 150,
-  "food_per_day_eur": 40,
-  "activities_per_day_eur": 20,
-  "travel_from": {},
-  "tags": ["culture", "architecture", "food", "nightlife", "beach"],
-  "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
-  "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
+    "id": "lisbon",
+    "name": "Lisbon",
+    "country": "Portugal",
+    "lat": 38.7223,
+    "lon": -9.1393,
+    "description": "Hilly capital of trams, tiled facades and viewpoints, with fado, pastéis de nata and beaches nearby.",
+    "avg_night_price_eur": 150,
+    "food_per_day_eur": 40,
+    "activities_per_day_eur": 20,
+    "tags": ["culture", "architecture", "food", "nightlife", "beach"],
+    "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
+    "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
   },
-    {
+  {
     "id": "paris",
     "name": "Paris",
     "country": "France",
@@ -126,7 +107,6 @@
     "avg_night_price_eur": 210,
     "food_per_day_eur": 50,
     "activities_per_day_eur": 30,
-    "travel_from": {},
     "tags": ["culture", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8, 9], "low": [1, 2, 11]}
@@ -141,7 +121,6 @@
     "avg_night_price_eur": 260,
     "food_per_day_eur": 55,
     "activities_per_day_eur": 30,
-    "travel_from": {},
     "tags": ["culture", "nightlife", "food"],
     "climate": {"spring": "cold", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 12], "low": [1, 2]}
@@ -156,7 +135,6 @@
     "avg_night_price_eur": 240,
     "food_per_day_eur": 50,
     "activities_per_day_eur": 25,
-    "travel_from": {},
     "tags": ["nightlife", "culture", "architecture"],
     "climate": {"spring": "cold", "summer": "mild", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [4, 5, 6, 7, 8], "low": [1, 2, 11]}
@@ -171,7 +149,6 @@
     "avg_night_price_eur": 140,
     "food_per_day_eur": 35,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["nightlife", "culture"],
     "climate": {"spring": "cold", "summer": "warm", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
@@ -186,7 +163,6 @@
     "avg_night_price_eur": 110,
     "food_per_day_eur": 25,
     "activities_per_day_eur": 15,
-    "travel_from": {},
     "tags": ["architecture", "culture", "nightlife"],
     "climate": {"spring": "cold", "summer": "warm", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8, 12], "low": [1, 2, 3]}
@@ -201,7 +177,6 @@
     "avg_night_price_eur": 95,
     "food_per_day_eur": 25,
     "activities_per_day_eur": 15,
-    "travel_from": {},
     "tags": ["nightlife", "architecture", "culture"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8], "low": [1, 2, 11]}
@@ -216,7 +191,6 @@
     "avg_night_price_eur": 85,
     "food_per_day_eur": 22,
     "activities_per_day_eur": 12,
-    "travel_from": {},
     "tags": ["culture", "food", "architecture"],
     "climate": {"spring": "cold", "summer": "warm", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 12], "low": [1, 2, 3]}
@@ -231,7 +205,6 @@
     "avg_night_price_eur": 120,
     "food_per_day_eur": 30,
     "activities_per_day_eur": 15,
-    "travel_from": {},
     "tags": ["food", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8, 9], "low": [1, 2, 11]}
@@ -246,7 +219,6 @@
     "avg_night_price_eur": 105,
     "food_per_day_eur": 30,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["culture", "food", "beach"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8, 9], "low": [1, 2, 12]}
@@ -261,7 +233,6 @@
     "avg_night_price_eur": 330,
     "food_per_day_eur": 55,
     "activities_per_day_eur": 30,
-    "travel_from": {},
     "tags": ["beach", "nightlife"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 3, 11, 12]}
@@ -276,7 +247,6 @@
     "avg_night_price_eur": 150,
     "food_per_day_eur": 35,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["beach", "nature", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11, 12]}
@@ -291,7 +261,6 @@
     "avg_night_price_eur": 140,
     "food_per_day_eur": 32,
     "activities_per_day_eur": 15,
-    "travel_from": {},
     "tags": ["beach", "food", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
@@ -306,7 +275,6 @@
     "avg_night_price_eur": 110,
     "food_per_day_eur": 30,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["beach", "nature"],
     "climate": {"spring": "warm", "summer": "warm", "autumn": "warm", "winter": "warm"},
     "seasons": {"high": [1, 2, 3, 11, 12], "low": [5, 6]}
@@ -321,7 +289,6 @@
     "avg_night_price_eur": 190,
     "food_per_day_eur": 50,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["beach", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 11, 12]}
@@ -336,7 +303,6 @@
     "avg_night_price_eur": 150,
     "food_per_day_eur": 40,
     "activities_per_day_eur": 30,
-    "travel_from": {},
     "tags": ["nature"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [1, 2, 7, 8, 12], "low": [4, 5, 11]}
@@ -351,7 +317,6 @@
     "avg_night_price_eur": 140,
     "food_per_day_eur": 40,
     "activities_per_day_eur": 25,
-    "travel_from": {},
     "tags": ["culture", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [5, 6, 7, 8, 9, 12], "low": [1, 2, 3]}
@@ -366,7 +331,6 @@
     "avg_night_price_eur": 190,
     "food_per_day_eur": 42,
     "activities_per_day_eur": 25,
-    "travel_from": {},
     "tags": ["culture", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [4, 5, 6, 9, 10], "low": [1, 2, 11]}
@@ -381,7 +345,6 @@
     "avg_night_price_eur": 230,
     "food_per_day_eur": 50,
     "activities_per_day_eur": 30,
-    "travel_from": {},
     "tags": ["architecture", "culture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "mild", "winter": "cold"},
     "seasons": {"high": [2, 5, 6, 9, 10], "low": [1, 11, 12]}
@@ -396,7 +359,6 @@
     "avg_night_price_eur": 220,
     "food_per_day_eur": 50,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["nightlife", "culture"],
     "climate": {"spring": "cold", "summer": "mild", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [3, 6, 7, 8], "low": [1, 2, 11]}
@@ -411,7 +373,6 @@
     "avg_night_price_eur": 200,
     "food_per_day_eur": 45,
     "activities_per_day_eur": 20,
-    "travel_from": {},
     "tags": ["culture", "nature", "architecture"],
     "climate": {"spring": "cold", "summer": "mild", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [7, 8, 12], "low": [1, 2, 3, 11]}
@@ -426,7 +387,6 @@
     "avg_night_price_eur": 230,
     "food_per_day_eur": 60,
     "activities_per_day_eur": 25,
-    "travel_from": {},
     "tags": ["architecture", "food", "culture"],
     "climate": {"spring": "cold", "summer": "mild", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [6, 7, 8], "low": [1, 2, 11]}
@@ -441,7 +401,6 @@
     "avg_night_price_eur": 130,
     "food_per_day_eur": 35,
     "activities_per_day_eur": 18,
-    "travel_from": {},
     "tags": ["beach", "culture", "architecture"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "mild"},
     "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 12]}
@@ -456,7 +415,6 @@
     "avg_night_price_eur": 230,
     "food_per_day_eur": 70,
     "activities_per_day_eur": 45,
-    "travel_from": {},
     "tags": ["nature"],
     "climate": {"spring": "cold", "summer": "cold", "autumn": "cold", "winter": "cold"},
     "seasons": {"high": [6, 7, 8], "low": [1, 11, 12]}
