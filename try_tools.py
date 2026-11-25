@@ -53,3 +53,12 @@ print("2.", run_tool("book_flight", {}, say_no))
 
 # 3. Arguments missing
 print("3.", run_tool("find_trips", {"people": 3}, say_no))
+
+# --- Any starting city (travel.py)
+print()
+from_madrid = request.model_copy(update={"origin": "madrid", "cheaper_than": None})
+result = find_trips(from_madrid)
+print("4. from Madrid:", result["found"], [t["city_name"] for t in result.get("trips", [])])
+
+from_paris = request.model_copy(update={"origin": "paris", "cheaper_than": None})
+print("5. from Paris:", find_trips(from_paris))
