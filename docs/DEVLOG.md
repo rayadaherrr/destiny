@@ -121,6 +121,7 @@ Method every time: **run/test → see something wrong → find the cause → cha
     - `travel.py` (new): `distance_km` (haversine) + `travel_between` (< 400 km train: km/90 h, €0.12/km; otherwise flight: 0.75 + km/800 h, €50 + €0.027/km; fitted to the old Lisbon routes). Checked with `try_travel.py`: Lisbon→Porto 274 km, 3.0 h, €33 train; Madrid→Rome 1364 km, 2.5 h, €87 flight.
       - `pricing.py`: `estimate_cost` now receives the travel (3rd input) instead of looking it up in `travel_from`
   - `tools.py`: `find_trips` finds the start city (clear failure if it isn't one of ours), skips it as a destination, and calculates travel with `travel_between` for every city
+    - `extraction.py`: the list of known city ids for Gemini is now built from `cities.json` (`load_cities()`) instead of typed by hand, so new cities are known automatically. Eval after the change: 15/15 messages, 40/40 fields (25 Nov).
   - **Bug:** Saw: `IndentationError: unindent does not match any outer indentation level (tools.py, line 88)`. Cause: the new `reference = ...` line had 9 spaces instead of 8. Fix: lined it up with `limit`. Retest: file runs.
   - **Bug:** Saw (reading the diff): the destination filter (`if args.destination and city.id != args.destination: continue`) had been deleted while replacing the loop lines, so "to Rome" would show every city. Fix: added it back as the first check in the loop.
 - **Retest:** *(fill in as we go)*
