@@ -7,7 +7,7 @@ import streamlit as st
 import config
 import db
 from extraction import extract_request
-from geo import COORDS
+from travel import travel_between
 from pricing import estimate_cost
 from schemas import TripRequest
 from tools import find_trips, load_cities
@@ -105,8 +105,8 @@ def map_rows(cities_to_show, color_mode):
     metrics = {}
     for c in cities_to_show:
         mine = [t["rating"] for t in my_trips if t["city_id"] == c.id]
-        estimate = estimate_cost(c, BASELINE)
-        travel = c.travel_from.get(BASELINE.origin)
+        travel = travel_between(by_id[BASELINE.origin], c)
+        estimate = estimate_cost(c, BASELINE, travel)
         metrics[c.id] = {
             "price": estimate.total_eur if estimate else None,
             "rating": sum(mine) / len(mine) if mine else None,
@@ -137,7 +137,7 @@ def map_rows(cities_to_show, color_mode):
         ])
         rows.append({
             "id": c.id, "city": c.name, "country": c.country,
-            "lat": COORDS[c.id][0], "lon": COORDS[c.id][1],
+            "lat": c.lat, "lon": c.lon,
             "metric_val": score, "details": details, "scale_label": scale_label,
         })
     return rows
@@ -181,7 +181,7 @@ with tab_map:
 
     filtered_cities = [
         c for c in cities
-        if c.id in COORDS and (not selected_tags or any(tag in selected_tags for tag in c.tags))
+        if c.id != BASELINE.origin and (not selected_tags or any(tag in selected_tags for tag in c.tags))
     ]
     df = pd.DataFrame(map_rows(filtered_cities, color_mode))
 
@@ -207,8 +207,8 @@ with tab_map:
                 "landcolor": "#f4f4f6",
                 "subunitcolor": "#ffffff",
                 "countrycolor": "#dcdde1",
-                "center": {"lat": 50, "lon": 10},
-                "projection": {"scale": 3.2},
+                "fitbounds": "locations",
+                
             },
             margin={"l": 0, "r": 0, "t": 0, "b": 0},
             height=420,

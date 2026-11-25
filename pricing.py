@@ -1,6 +1,6 @@
 import datetime
 
-from schemas import City, TripEstimate, TripRequest
+from schemas import City, Travel, TripEstimate, TripRequest
 
 # Price rules: the same for every city (the months are in cities.json)
 SEASON_MULTIPLIER = {"high": 1.3, "normal": 1.0, "low": 0.8}
@@ -39,11 +39,8 @@ def booking_multiplier(start_date):
     return BOOKING_MULTIPLIER[-1][1]   # trip is today or in the past: the most expensive
 
 
-def estimate_cost(city: City, request: TripRequest):
-    # Step 1: how to get there from the user's starting city
-    travel = city.travel_from.get(request.origin)
-    if travel is None:
-        return None   # we have no travel data from this origin to this city
+def estimate_cost(city: City, request: TripRequest, travel: Travel):
+    # Step 1: how to get there is calculated by travel.py and passed in (any starting city)
 
     # Step 2: dates known -> use them; no dates -> a rough estimate with defaults
     if request.start_date and request.end_date:

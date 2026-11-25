@@ -4,7 +4,7 @@ from google import genai
 
 import config
 from schemas import TripRequest
-from tools import fix_year
+from tools import fix_year, load_cities
 
 client = genai.Client(api_key=config.API_KEY)
 
@@ -27,7 +27,7 @@ def instruction():
         "put it in destination and keep origin = 'lisbon'. "
         "Users often misspell city names (e.g. 'prais' means Paris, 'barcleona' means Barcelona): "     # ← NEW
         "correct them to the real city. "                                                               # ← NEW
-        "Known city ids: porto, valencia, seville, barcelona, madrid, rome, lisbon. "                   # ← NEW
+        f"Known city ids: {', '.join(city.id for city in load_cities())}. "
         "Always use one of these ids for origin, destination and cheaper_than when the user means one of them; "
         "for other cities use the lowercase English name, e.g. 'paris'. "     # ← NEW
         # --- Date rules ---

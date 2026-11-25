@@ -13,6 +13,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ValidationError
 
 from pricing import estimate_cost
+from travel import travel_between
 from schemas import City, TripRequest
 
 CITIES_FILE = Path(__file__).parent / "data" / "cities.json"
@@ -68,6 +69,11 @@ def find_trips(args):
 
     cities = load_cities()
     by_id = {city.id: city for city in cities}
+    if args.origin not in by_id:
+        return {"found": False, "problems": [f"{args.origin} is not one of our starting cities yet"],
+                "our_cities": sorted(by_id),
+                "what_to_do": "Tell the user we cannot start from that city yet, and offer the cities we have."}
+    origin_city = by_id[args.origin]
 
     if args.destination and args.destination not in by_id:
         return {"found": False, "problems": [f"{args.destination} is not one of our cities yet"],
@@ -77,7 +83,8 @@ def find_trips(args):
     # "Cheaper than Barcelona": price Barcelona first, then keep only cities below it
     limit = None
     if args.cheaper_than in by_id:
-        reference = estimate_cost(by_id[args.cheaper_than], args)
+        reference = estimate_cost(by_id[args.cheaper_than], args,
+                         travel_between(origin_city, by_id[args.cheaper_than]))
         limit = reference.total_eur if reference else None
 
     trips = []
@@ -86,10 +93,10 @@ def find_trips(args):
             continue
         if city.id == args.cheaper_than:
             continue
-        estimate = estimate_cost(city, args)
-        if estimate is None:                      # no travel data from this starting city
+        if city.id == args.origin:                # don't suggest a trip to where they already are
             continue
-        travel = city.travel_from[args.origin]
+        travel = travel_between(origin_city, city)
+        estimate = estimate_cost(city, args, travel)
         if args.max_travel_hours is not None and travel.hours > args.max_travel_hours:
             continue
         if limit is not None and estimate.total_eur >= limit:
