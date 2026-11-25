@@ -116,22 +116,27 @@ Method every time: **run/test → see something wrong → find the cause → cha
 - **Plan:** store each city's `lat`/`lon`, remove `travel_from`, calculate travel between any two cities in a new `travel.py` (distance → mode, hours, cost), then add more cities.
 - **Baseline before any-city (24 Nov 2026, gemini-flash-lite-latest):** 15/15 messages, 40/40 fields (`uv run python eval_extraction.py`).
 - **Agreed with Shaahir (24 Nov):** coordinates go into `cities.json`; `geo.py` stays for now because the map uses it; delete it later once the map reads `lat`/`lon` from `cities.json`.
-- **Changes:**
-  - `schemas.py`: City gets `lat` and `lon` (floats, with descriptions; west of Greenwich is negative); `travel_from` kept for now (the map still uses it)
-    - `travel.py` (new): `distance_km` (haversine) + `travel_between` (< 400 km train: km/90 h, €0.12/km; otherwise flight: 0.75 + km/800 h, €50 + €0.027/km; fitted to the old Lisbon routes). Checked with `try_travel.py`: Lisbon→Porto 274 km, 3.0 h, €33 train; Madrid→Rome 1364 km, 2.5 h, €87 flight.
-      - `pricing.py`: `estimate_cost` now receives the travel (3rd input) instead of looking it up in `travel_from`
-  - `tools.py`: `find_trips` finds the start city (clear failure if it isn't one of ours), skips it as a destination, and calculates travel with `travel_between` for every city
-    - `extraction.py`: the list of known city ids for Gemini is now built from `cities.json` (`load_cities()`) instead of typed by hand, so new cities are known automatically. Eval after the change: 15/15 messages, 40/40 fields (25 Nov).
-      - `try_tools.py`: test 5 used "from Paris" to check the failure for a start city we don't have. Paris is now one of our cities, so the test no longer tested a failure → changed it to "from Ibiza" (still not ours), and added test 6: "from Paris" now works.
-        - `cities.json`: 23 new cities (30 in total) chosen for variety: beach, nature, nightlife, cheap and expensive, warm in winter (Las Palmas), 15 countries. lat/lon accurate; night/food/activity prices are estimates (see data_model.md).
-  - **Bug:** same missing comma as before, this time after Lisbon's `}` (line 118). Pattern: every time a city is pasted after the last one, the previous `}` needs a comma.
-  - `try_tools.py`: test 5 used "from Paris" to check a start city we don't have; Paris is now ours, so test 5 is now "from Ibiza" and test 6 checks "from Paris" works.
-  - `examples.jsonl`: new test "I want to go to Ibiza" (a city we don't have → destination ibiza, origin stays lisbon).
-  - `data_model.md`: sources per group of cities, climate rule = average daily high per season.
-  - **Bug:** Saw: `IndentationError: unindent does not match any outer indentation level (tools.py, line 88)`. Cause: the new `reference = ...` line had 9 spaces instead of 8. Fix: lined it up with `limit`. Retest: file runs.
-  - **Bug:** Saw (reading the diff): the destination filter (`if args.destination and city.id != args.destination: continue`) had been deleted while replacing the loop lines, so "to Rome" would show every city. Fix: added it back as the first check in the loop.
-- **Retest:** *(fill in as we go)*
-  - `cities.json`: added `lat`/`lon` to the 6 cities (values from Shaahir's `geo.py`)
-  - `cities.json`: added Lisbon (lat/lon; night price €150 = Inside Airbnb median for entire homes, Dec 2025; food/activities estimated) + `docs/data_model.md` (what each field means, sources, climate rule)
-    - 25 Nov, after the 23 cities: eval 16/16, 42/42 (gemini-flash-lite-latest); try_tools: all 30 cities load; from Madrid 16 cities; from Paris works (cheapest Kraków); from Ibiza → clear "not one of our starting cities". From Paris, London is a train (344 km, 3.8 h, €86).
-  - **Bug:** Saw: `JSONDecodeError: Expecting ',' delimiter: line 104`. Cause: no comma after Rome's closing `}` when Lisbon was pasted below it. Fix: `}` → `},` on line 103. Retest: the file loads, 7 cities.
+
+- **Changes (in order):**
+  1. `schemas.py`: City gets `lat` and `lon` (floats, with descriptions; west of Greenwich is negative); `travel_from` kept for now (the map still uses it).
+  2. `cities.json`: added `lat`/`lon` to the 6 cities (values from Shaahir's `geo.py`).
+  3. `cities.json`: added Lisbon (lat/lon; night price €150 = Inside Airbnb median for entire homes, Dec 2025; food/activities estimated) + new `docs/data_model.md` (what each field means, sources, climate rule).
+     - **Bug:** Saw: `JSONDecodeError: Expecting ',' delimiter: line 104`. Cause: no comma after Rome's closing `}` when Lisbon was pasted below it. Fix: `}` → `},` on line 103. Retest: the file loads, 7 cities.
+  4. `travel.py` (new): `distance_km` (haversine) + `travel_between` (< 400 km train: km/90 h, €0.12/km; otherwise flight: 0.75 + km/800 h, €50 + €0.027/km; fitted to the old Lisbon routes). Checked with `try_travel.py`: Lisbon→Porto 274 km, 3.0 h, €33 train; Madrid→Rome 1364 km, 2.5 h, €87 flight.
+  5. `pricing.py`: `estimate_cost` now receives the travel (3rd input) instead of looking it up in `travel_from`.
+  6. `tools.py`: `find_trips` finds the start city (clear failure if it isn't one of ours), skips it as a destination, and calculates travel with `travel_between` for every city.
+     - **Bug:** Saw: `IndentationError: unindent does not match any outer indentation level (tools.py, line 88)`. Cause: the new `reference = ...` line had 9 spaces instead of 8. Fix: lined it up with `limit`. Retest: file runs.
+     - **Bug:** Saw (reading the diff): the destination filter (`if args.destination and city.id != args.destination: continue`) had been deleted while replacing the loop lines, so "to Rome" would show every city. Fix: added it back as the first check in the loop.
+  7. `extraction.py`: the list of known city ids for Gemini is now built from `cities.json` (`load_cities()`) instead of typed by hand, so new cities are known automatically.
+  8. `cities.json`: 23 new cities (30 in total) chosen for variety: beach, nature, nightlife, cheap and expensive, warm in winter (Las Palmas), 15 countries. lat/lon accurate; night/food/activity prices are estimates (see `data_model.md`).
+     - **Bug:** same missing comma as in change 3, this time after Lisbon's `}` (line 118). Pattern: every time a city is pasted after the last one, the previous `}` needs a comma.
+  9. Tests updated: `try_tools.py` test 5 used "from Paris" to check a start city we don't have; Paris is now ours, so test 5 is now "from Ibiza" and test 6 checks "from Paris" works. `examples.jsonl`: new test "I want to go to Ibiza" (a city we don't have → destination ibiza, origin stays lisbon).
+  10. `data_model.md`: sources per group of cities; climate rule = average daily high temperature per season.
+
+- **Retest:**
+  - After changes 5–6, `try_tools.py` from Lisbon: prices almost unchanged (Porto €563 → €561, Madrid €667 → €665, Rome €963 → €964); Seville is now a train (314 km) so it became the cheapest. From Madrid: cities found, Madrid skipped, Lisbon included. Unknown tool and missing field still give the right errors.
+  - After change 7 (25 Nov): eval 15/15 messages, 40/40 fields.
+  - After changes 8–10 (25 Nov): eval 16/16, 42/42 (gemini-flash-lite-latest); `try_tools.py`: all 30 cities load; from Madrid 16 cities; from Paris works (cheapest Kraków); from Ibiza → clear "not one of our starting cities". From Paris, London is a train (344 km, 3.8 h, €86).
+
+- **Still to do:** update the map in `views/trip_finder.py` to use `travel.py` (waiting for Shaahir's OK), then delete `travel_from` from `schemas.py` and `cities.json`, and `geo.py`.
+- **Limitations found:** travel is estimated from straight-line distance (same price both ways, one mode per route); routes under 400 km across the sea (Athens–Mykonos, Dublin–Edinburgh, Split–Rome/Naples/Venice) come out as "train".
