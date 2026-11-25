@@ -100,5 +100,20 @@
     "tags": ["culture", "architecture", "food"],
     "climate": {"spring": "mild", "summer": "hot", "autumn": "warm", "winter": "cold"},
     "seasons": {"high": [4, 5, 6, 9, 10], "low": [1, 2, 11]}
+  },
+  {
+  "id": "lisbon",
+  "name": "Lisbon",
+  "country": "Portugal",
+  "lat": 38.7223,
+  "lon": -9.1393,
+  "description": "Hilly capital of trams, tiled facades and viewpoints, with fado, pastéis de nata and beaches nearby.",
+  "avg_night_price_eur": 150,
+  "food_per_day_eur": 40,
+  "activities_per_day_eur": 20,
+  "travel_from": {},
+  "tags": ["culture", "architecture", "food", "nightlife", "beach"],
+  "climate": {"spring": "mild", "summer": "warm", "autumn": "mild", "winter": "cold"},
+  "seasons": {"high": [6, 7, 8, 9], "low": [1, 2, 11]}
   }
 ]
