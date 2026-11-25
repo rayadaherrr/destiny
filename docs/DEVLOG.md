@@ -140,3 +140,19 @@ Method every time: **run/test → see something wrong → find the cause → cha
 
 - **Still to do:** update the map in `views/trip_finder.py` to use `travel.py` (waiting for Shaahir's OK), then delete `travel_from` from `schemas.py` and `cities.json`, and `geo.py`.
 - **Limitations found:** travel is estimated from straight-line distance (same price both ways, one mode per route); routes under 400 km across the sea (Athens–Mykonos, Dublin–Edinburgh, Split–Rome/Naples/Venice) come out as "train".
+
+### Step 16 – The map uses travel.py and the 30 cities (branch `any-city`)
+- **Why:** the map in `views/trip_finder.py` (Shaahir's) still used the old Lisbon-only data: `travel_from` for travel time and `COORDS` from `geo.py` for locations (only 6 cities). After Step 15, `estimate_cost` needs the travel passed in, so the map would give an error, and only 6 of the 30 cities would show.
+- **Decision:** small changes in Shaahir's file without waiting for his reply, because they only connect his map to the new code; he reviews them in the pull request before they go into `main`, and I tell him what changed.
+- **Planned changes in `views/trip_finder.py`:**
+  1. Imports: remove `from geo import COORDS`, add `from travel import travel_between`.
+  2. `map_rows` (lines 108–109): `travel = travel_between(by_id[BASELINE.origin], c)` then `estimate = estimate_cost(c, BASELINE, travel)`, instead of `travel_from`.
+  3. Line 140: `"lat": c.lat, "lon": c.lon` instead of `COORDS[c.id]`.
+  4. Line 184: show every city except the start city (`c.id != BASELINE.origin`) instead of only the cities in `COORDS`.
+- **Then:** delete `geo.py`, `travel_from` (in `schemas.py` and `cities.json`) and the old test page `pages/1_Trip_results.py` (it also calls `estimate_cost` with 2 inputs and the app no longer opens it).
+- **Changes:** the 4 planned changes in `views/trip_finder.py`, plus:
+  - **Bug:** Saw: the map only showed ~11 of 29 cities (central Europe; Spain, Portugal, Greece, Iceland and the Canaries were off screen). Cause: the camera was set by hand (`center` lat 50 / lon 10 + `projection scale 3.2`), which fitted the original 6 cities but not cities from Iceland to the Canaries. Fix: replaced both with `"fitbounds": "locations"`, so the map zooms to fit all the dots (and still works when cities are added or filtered).
+  - Note: all dots were yellow under "Your Past Ratings" because the test account had no ratings yet ("no data" = middle colour); not a bug.
+  - Note: saving Shaahir's file in VS Code on Windows changed every line ending to CRLF, so Git showed the whole file as changed; switched back to LF so only the real changes show.
+- **Retest:** map shows 29 dots (Reykjavik to Las Palmas to Mykonos); Average Price goes green→red; clicking Paris → "Price a trip" gives a card; "From Madrid, somewhere with beaches" gives cards.
+  - **Bug found (not fixed, existed before):** Saw: clicked Copenhagen on the map, then chose Paris in "…or choose from the list" → it stayed on Copenhagen. Cause: `city_id = map_pick or list_pick` (views/trip_finder.py) — a map click stays selected and always wins over the list. Not part of any-city; reported to Shaahir.
