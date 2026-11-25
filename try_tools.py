@@ -67,3 +67,11 @@ print("5. from Ibiza:", find_trips(from_ibiza))
 from_paris = request.model_copy(update={"origin": "paris", "cheaper_than": None})
 result = find_trips(from_paris)
 print("6. from Paris:", result["found"], [t["city_name"] for t in result.get("trips", [])][:5])
+
+# --- Part 3: tools for the logged-in user's past trips
+print()
+import db
+alex = db.login("alex", "demo123")       # the demo user from seed.py; gives back his user id
+print("alex's user id:", alex)
+print("7. list alex's trips:", run_tool("list_my_trips", {}, say_no, user_id=alex))
+print("8. nobody logged in:", run_tool("list_my_trips", {}, say_no))

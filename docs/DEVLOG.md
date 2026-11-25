@@ -155,3 +155,19 @@ Method every time: **run/test → see something wrong → find the cause → cha
   - **Bug found (not fixed, existed before):** Saw: clicked Copenhagen on the map, then chose Paris in "…or choose from the list" → it stayed on Copenhagen. Cause: `city_id = map_pick or list_pick` — a map click stays selected and always wins over the list. Not part of any-city; reported to Shaahir, on the to-do list to fix before submission.
 - **Cleanup:** deleted `pages/1_Trip_results.py` (old developer test page from October, broken and no longer opened by the app) and `travel_from` (in `schemas.py` and all 30 cities; travel is calculated by `travel.py`). Kept `geo.py` because Shaahir asked to — it is no longer used by the map; asked him in the pull request whether it can go. `cities.json` put back into compact format (VS Code had reformatted it on paste).
 - **Retest:** map shows 29 dots (Reykjavik to Las Palmas to Mykonos); Average Price goes green→red; Paris chosen from the list → "Price a trip" gives a card; "From Madrid, somewhere with beaches" gives cards. After the cleanup: `try_tools.py` all 30 cities load, eval 16/16.
+## 25 November 2026 (continued)
+
+### Step 17 – Tools for past trips: log, list, delete (branch `tools-part3`)
+- **Why:** Week 5 / Handbook require tools the agent calls: at least one that reads the app's data and one that changes it; tools that delete what the user can't get back must ask first, in code; every failure is a sentence the agent can act on; every tool's contract in `docs/TOOLS.md`.
+- **Decision:** the tools work on **past trips** (the `trips` table in Shaahir's `db.py`: city, rating 1–5, review, dates, money spent). No database changes needed; fits Destiny's Letterboxd idea ("I went to Rome in May, 4 stars"). Planned trips / wishlist left for later.
+- **Plan (all in `tools.py`):**
+  1. `log_trip` (writes): city, rating, optional review, dates and money spent → `db.add_trip`. Rules checked in code, not in the schema: city must be one of ours, rating 1–5, both dates or neither, end not before start, trip not in the future, money not negative. Failures say what is wrong and "do not change what the user said".
+  2. `list_my_trips` (reads): the user's logged trips with their ids → `db.user_trips`.
+  3. `delete_trip` (deletes, in `ASK_FIRST`): one trip by id, only if it is the user's own; asks the user first with the trip's details; a no → "Nothing was deleted. Do not ask again." → `db.delete_trip`.
+  4. **Which user:** the user id comes from the app (the logged-in user), never from Gemini — it is not an argument the model fills in, so a message can't make the agent act on someone else's trips.
+  5. Tests in `try_tools.py`; contracts in `docs/TOOLS.md`.
+- **Changes:**   - `run_tool(name, arguments, confirm, user_id=None)`: new `USER_TOOLS` set; tools in it get `user_id` from the app (never from the model); no user → "needs a logged-in user… Ask the user to log in."
+  - `list_my_trips` (reads): `NoArguments` model + function using `db.user_trips`; returns each trip with its id, city name, rating, review, dates, money spent; no trips → empty list + note.
+  - **Bug:** Saw: `NameError: name 'NoArguments' is not defined`-risk — the class and function were placed below the `TOOLS` menu that uses them. Fix: moved them above the menu (Python reads top to bottom).
+  - **Bug:** Saw: `NameError: name 'say_no' is not defined` (tools.py line 204). Cause: the test lines were pasted at the end of tools.py instead of try_tools.py. Fix: moved them to try_tools.py.
+- **Retest:**  - `try_tools.py` test 7: alex (user 2) → Rome (id 2, 4★) and Barcelona (id 1, 5★); test 8: no user → clear error; tests 1–6 unchanged.

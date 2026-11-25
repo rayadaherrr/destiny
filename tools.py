@@ -8,6 +8,7 @@ Built on the course's Week 5 tools.py, with the same shape:
 """
 import datetime
 import json
+import db
 from pathlib import Path
 
 from pydantic import BaseModel, Field, ValidationError
@@ -114,6 +115,30 @@ def find_trips(args):
                               "and suggest relaxing one."}
     return {"found": True, "trips": trips}
 
+class NoArguments(BaseModel):
+    """For tools the model calls without any arguments."""
+    pass
+
+
+def list_my_trips(args, user_id):
+    """The user's logged past trips, newest first, with the ids that delete_trip needs."""
+    names = {city.id: city.name for city in load_cities()}
+    trips = []
+    for row in db.user_trips(user_id):
+        trips.append({
+            "id": row["id"],
+            "city": names.get(row["city_id"], row["city_id"]),
+            "rating": row["rating"],
+            "review": row["review"],
+            "start_date": row["start_date"],
+            "end_date": row["end_date"],
+            "spent_per_person_eur": row["budget_eur"],
+        })
+    if not trips:
+        return {"trips": [], "note": "This user has not logged any trips yet."}
+    return {"trips": trips}
+
+
 # ---------------------------------------------------------------- the tool list (from the teacher's Week 5 tools.py)
 
 # name: (argument model, function, description). The declarations are built from it.
@@ -122,7 +147,15 @@ TOOLS = {
                    "Find and price trips from the user's starting city: every city we cover that matches their "
                    "dates, group size, budget, maximum travel time, interests, destination and 'cheaper than' city, "
                    "cheapest first. Use it whenever the user asks where to go or how much a trip would cost."),
+    "list_my_trips": (NoArguments, list_my_trips,
+                      "List the trips the user has already taken and logged: city, rating 1-5, review, "
+                      "dates and money spent, with the id of each trip. Use it when the user asks about "
+                      "their past trips, and to find a trip's id before deleting it."),
 }
+
+
+# Tools that work on the logged-in user's own data. They receive user_id from the app, never from the model.
+USER_TOOLS = {"list_my_trips"}   # log_trip and delete_trip are added here next
 
 # Tools that destroy what the user already has. They receive confirm() and must get a yes before acting.
 ASK_FIRST = set()   # delete_trip goes here in Part 3
@@ -133,7 +166,7 @@ DECLARATIONS = [
 ]
 
 
-def run_tool(name, arguments, confirm):
+def run_tool(name, arguments, confirm, user_id=None):
     """Run one call the model asked for. Every failure comes back as a result; nothing raises."""
     if name not in TOOLS:
         return {"error": f"There is no tool called {name}. The tools are: {', '.join(TOOLS)}."}
@@ -145,7 +178,14 @@ def run_tool(name, arguments, confirm):
         field = ".".join(str(part) for part in problem["loc"]) or "arguments"
         return {"error": f"Invalid {field}: {problem['msg']}. Fix it and call again."}
     try:
-        result = function(args, confirm) if name in ASK_FIRST else function(args)
+        extra = {}
+        if name in ASK_FIRST:
+            extra["confirm"] = confirm
+        if name in USER_TOOLS:
+            if user_id is None:
+                return {"error": f"{name} needs a logged-in user, and nobody is logged in. Ask the user to log in."}
+            extra["user_id"] = user_id
+        result = function(args, **extra)
     except Exception as error:
         # A write that failed half-way may or may not have changed the data. Say so,
         # or the agent will repeat it blindly and write it twice.
@@ -155,3 +195,4 @@ def run_tool(name, arguments, confirm):
     if not isinstance(result, dict):
         result = {"result": result}
     return json.loads(json.dumps(result, default=str))
+
