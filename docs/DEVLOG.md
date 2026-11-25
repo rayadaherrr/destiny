@@ -119,3 +119,6 @@ Method every time: **run/test → see something wrong → find the cause → cha
 - **Changes:**
   - `schemas.py`: City gets `lat` and `lon` (floats, with descriptions; west of Greenwich is negative); `travel_from` kept for now (the map still uses it)
 - **Retest:** *(fill in as we go)*
+  - `cities.json`: added `lat`/`lon` to the 6 cities (values from Shaahir's `geo.py`)
+  - `cities.json`: added Lisbon (lat/lon; night price €150 = Inside Airbnb median for entire homes, Dec 2025; food/activities estimated) + `docs/data_model.md` (what each field means, sources, climate rule)
+  - **Bug:** Saw: `JSONDecodeError: Expecting ',' delimiter: line 104`. Cause: no comma after Rome's closing `}` when Lisbon was pasted below it. Fix: `}` → `},` on line 103. Retest: the file loads, 7 cities.
