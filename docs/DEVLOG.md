@@ -122,9 +122,16 @@ Method every time: **run/test → see something wrong → find the cause → cha
       - `pricing.py`: `estimate_cost` now receives the travel (3rd input) instead of looking it up in `travel_from`
   - `tools.py`: `find_trips` finds the start city (clear failure if it isn't one of ours), skips it as a destination, and calculates travel with `travel_between` for every city
     - `extraction.py`: the list of known city ids for Gemini is now built from `cities.json` (`load_cities()`) instead of typed by hand, so new cities are known automatically. Eval after the change: 15/15 messages, 40/40 fields (25 Nov).
+      - `try_tools.py`: test 5 used "from Paris" to check the failure for a start city we don't have. Paris is now one of our cities, so the test no longer tested a failure → changed it to "from Ibiza" (still not ours), and added test 6: "from Paris" now works.
+        - `cities.json`: 23 new cities (30 in total) chosen for variety: beach, nature, nightlife, cheap and expensive, warm in winter (Las Palmas), 15 countries. lat/lon accurate; night/food/activity prices are estimates (see data_model.md).
+  - **Bug:** same missing comma as before, this time after Lisbon's `}` (line 118). Pattern: every time a city is pasted after the last one, the previous `}` needs a comma.
+  - `try_tools.py`: test 5 used "from Paris" to check a start city we don't have; Paris is now ours, so test 5 is now "from Ibiza" and test 6 checks "from Paris" works.
+  - `examples.jsonl`: new test "I want to go to Ibiza" (a city we don't have → destination ibiza, origin stays lisbon).
+  - `data_model.md`: sources per group of cities, climate rule = average daily high per season.
   - **Bug:** Saw: `IndentationError: unindent does not match any outer indentation level (tools.py, line 88)`. Cause: the new `reference = ...` line had 9 spaces instead of 8. Fix: lined it up with `limit`. Retest: file runs.
   - **Bug:** Saw (reading the diff): the destination filter (`if args.destination and city.id != args.destination: continue`) had been deleted while replacing the loop lines, so "to Rome" would show every city. Fix: added it back as the first check in the loop.
 - **Retest:** *(fill in as we go)*
   - `cities.json`: added `lat`/`lon` to the 6 cities (values from Shaahir's `geo.py`)
   - `cities.json`: added Lisbon (lat/lon; night price €150 = Inside Airbnb median for entire homes, Dec 2025; food/activities estimated) + `docs/data_model.md` (what each field means, sources, climate rule)
+    - 25 Nov, after the 23 cities: eval 16/16, 42/42 (gemini-flash-lite-latest); try_tools: all 30 cities load; from Madrid 16 cities; from Paris works (cheapest Kraków); from Ibiza → clear "not one of our starting cities". From Paris, London is a train (344 km, 3.8 h, €86).
   - **Bug:** Saw: `JSONDecodeError: Expecting ',' delimiter: line 104`. Cause: no comma after Rome's closing `}` when Lisbon was pasted below it. Fix: `}` → `},` on line 103. Retest: the file loads, 7 cities.

@@ -60,5 +60,10 @@ from_madrid = request.model_copy(update={"origin": "madrid", "cheaper_than": Non
 result = find_trips(from_madrid)
 print("4. from Madrid:", result["found"], [t["city_name"] for t in result.get("trips", [])])
 
+
+from_ibiza = request.model_copy(update={"origin": "ibiza", "cheaper_than": None})
+print("5. from Ibiza:", find_trips(from_ibiza))
+
 from_paris = request.model_copy(update={"origin": "paris", "cheaper_than": None})
-print("5. from Paris:", find_trips(from_paris))
+result = find_trips(from_paris)
+print("6. from Paris:", result["found"], [t["city_name"] for t in result.get("trips", [])][:5])

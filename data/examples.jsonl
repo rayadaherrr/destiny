@@ -13,3 +13,4 @@
 {"message": "One day trip on 10 October", "expected": {"start_date": "2027-10-10", "end_date": "2027-10-10"}, "note": "10 Oct already passed; one-day trip = same start and end"}
 {"message": "Somewhere with beaches and bars this summer", "expected": {"interests": ["beach", "nightlife"], "start_date": null, "end_date": null}, "note": "no exact dates; 'this summer' is lost until we add a month/season field"}
 {"message": "hello", "expected": {"origin": "lisbon", "destination": null, "people": 1, "budget_per_person_eur": null, "interests": []}, "note": "nothing said: defaults"}
+{"message": "I want to go to Ibiza", "expected": {"origin": "lisbon", "destination": "ibiza"}, "note": "city we don't have: Gemini should still fill it in, find_trips then says it's not ours"}
