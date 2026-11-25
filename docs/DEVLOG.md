@@ -118,6 +118,11 @@ Method every time: **run/test → see something wrong → find the cause → cha
 - **Agreed with Shaahir (24 Nov):** coordinates go into `cities.json`; `geo.py` stays for now because the map uses it; delete it later once the map reads `lat`/`lon` from `cities.json`.
 - **Changes:**
   - `schemas.py`: City gets `lat` and `lon` (floats, with descriptions; west of Greenwich is negative); `travel_from` kept for now (the map still uses it)
+    - `travel.py` (new): `distance_km` (haversine) + `travel_between` (< 400 km train: km/90 h, €0.12/km; otherwise flight: 0.75 + km/800 h, €50 + €0.027/km; fitted to the old Lisbon routes). Checked with `try_travel.py`: Lisbon→Porto 274 km, 3.0 h, €33 train; Madrid→Rome 1364 km, 2.5 h, €87 flight.
+      - `pricing.py`: `estimate_cost` now receives the travel (3rd input) instead of looking it up in `travel_from`
+  - `tools.py`: `find_trips` finds the start city (clear failure if it isn't one of ours), skips it as a destination, and calculates travel with `travel_between` for every city
+  - **Bug:** Saw: `IndentationError: unindent does not match any outer indentation level (tools.py, line 88)`. Cause: the new `reference = ...` line had 9 spaces instead of 8. Fix: lined it up with `limit`. Retest: file runs.
+  - **Bug:** Saw (reading the diff): the destination filter (`if args.destination and city.id != args.destination: continue`) had been deleted while replacing the loop lines, so "to Rome" would show every city. Fix: added it back as the first check in the loop.
 - **Retest:** *(fill in as we go)*
   - `cities.json`: added `lat`/`lon` to the 6 cities (values from Shaahir's `geo.py`)
   - `cities.json`: added Lisbon (lat/lon; night price €150 = Inside Airbnb median for entire homes, Dec 2025; food/activities estimated) + `docs/data_model.md` (what each field means, sources, climate rule)
